@@ -1,16 +1,3 @@
-<!doctype html>
-<html lang="en">
-
-<head>
-
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Hello, world!</title>
-
-
-</head>
-
-
 <body>
 
     <div class="container halaman">
@@ -125,45 +112,26 @@
             ?>
 
                 <form method="post" action="tambahwh.php">
+                    <label for="kodewh">Kode Warehouse: </label>
+                    <input type="text" name="kodewh" id="kodewh">
                     <div class="d-block asd">
-                        <label>
-                            <? include 'koneksi.php';
-                            $data3 = mysqli_query($conn, "SELECT qty FROM purchasing") ?>
-                            <input type="text" id="qty" name="qty" value="<?php echo $qty; ?>" required />
-                            <!-- <div class="label-text">Warehouse Kode</div> -->
-                        </label>
-                        <br>
-
-                        <label>
-                            <input type="text" id="kodewh" name="kodewh" value="<?php echo $kodesupplier; ?>"
-                                required />
-                            <div class="label-text">Warehouse Kode</div>
-                        </label>
-
-                <? 
-                include 'koneksi.php';
-                $data1 = mysqli_query ($conn, "select * from purchasing"); ?>
-
-                        <div class="form-group">
-                            <label for="example">supplier</label>
-                            <select class="form-control" name="purchase_id" id="purchase_id"
-                                onchange="showDetail(this.value)" required>
-                                <option value="">Pilih Kode Order</option>
-                                <?php 
-                                    while ($hasil1 = mysqli_fetch_array ($data1))
-                                        {
-                                    ?>
-                                <option value="<?php echo $hasil1['id'] ?> ">
-                                    <?php echo $hasil1['kodepurchase'] ?>
-                                </option>
-
-                                <? }
-                                    ?>
-
-                            </select>
-                        </div>
-                        <div id="txtHint">Material masuk info will be listed here...</div> <br>
-                    </div>
+                    <?php
+                    require_once 'koneksi.php';
+                    $query = "SELECT * FROM purchasing ORDER BY id DESC";
+                    $result = mysqli_query($conn, $query);
+                    ?>
+                    <label for="purchase_id">Pilih kode order: </label>
+                    <select name="purchase_id" id="purchase_id" class="form-control" onchange="showDetail(this.value)" required>
+                    <option value="">Pilih kode order</option>
+                    <?php while($data = mysqli_fetch_array($result) ){?>
+                    <option value="<?php $idpur = $data['id']; echo $data['id'];?>">
+                        <?php echo $data['kodepurchase']; ?></option>
+                    <?php } ?>
+                    </select>
+                    
+                    <br>
+                    
+                    <div id="txtHint"></div>
                     <div class="text-right mr-5">
                         <button type="reset" value="reset" class="btn btn-secondary">Batal</button>
                         <button type="submit" value="Submit" class="btn btn-primary">Tampilkan</button>
@@ -185,18 +153,26 @@
 
 <script>
     function showDetail(str) {
-        var xhttp;
+    
         if (str == "") {
-            document.getElementById("txtHint").innerHTML = "";
-            return;
-        }
-        xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("txtHint").innerHTML = this.responseText;
+        document.getElementById("txtHint").innerHTML = "";
+        return;
+        } else {
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            } else {
+                // code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
             }
-        };
-        xhttp.open("GET", "getData.php?q=" + str, true);
-        xhttp.send();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("txtHint").innerHTML = this.responseText;
+                }
+            };
+            xmlhttp.open("GET","getData.php?q="+str,true);
+            xmlhttp.send();
+        }
+        
     }
 </script>

@@ -20,7 +20,7 @@ th {text-align: left;} */
 <?php
 $q = intval($_GET['q']);
 
-$con = mysqli_connect('localhost','root','','pt');
+$con = mysqli_connect('localhost','akbarlaz','password','pt');
 if (!$con) {
     die('Could not connect: ' . mysqli_error($con));
 }
@@ -29,24 +29,18 @@ mysqli_select_db($con,"ajax_demo");
 $sql="SELECT * FROM purchasing WHERE id = '".$q."'";
 $result = mysqli_query($con,$sql);
 
-echo "<table class=' text-center'>
-<tr>
-<th>kode purchase</th>
-<th>kode barang</th>
-<th>kode supplier</th>
-<th>Quantity</th>
-<th>price</th>
-</tr>";
 while($row = mysqli_fetch_array($result)) {
-    echo "<tr>";
-    echo "<td>" . $row['kodepurchase'] . "</td>";
-    echo "<td>" . $row['kodebarang'] . "</td>";
+    echo "<label for='qty'>Order Quantity:</label>
+        <input type='text' name='orderqty' id='orderqty' value='". $row['qty']."' disabled>";
+    echo "<br>";
+    echo "<label for='inqty'>In Quantity:</label>
+        <input value='". $row['qty'] ."' type='text' name='inqty' id='inqty'>";
+    /* echo "<td>" . $row['kodebarang'] . "</td>";
     echo "<td>" . $row['kodesupplier'] . "</td>";
     echo "<td>" . $row['qty'] . "</td>";
     echo "<td>" . $row['price'] . "</td>";
-    echo "</tr>";
+    echo "</tr>"; */
 }
-echo "</table>";
 mysqli_close($con);
 ?>
 </body>
