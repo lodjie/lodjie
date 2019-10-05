@@ -36,21 +36,23 @@
               <?php
                 include"koneksi.php";
                 $no = 1;
-                $data = mysqli_query($conn, "SELECT material.idmaterial, purchasing.kodebarang, material.last_stock + purchasing.qty as jumlah FROM material, purchasing GROUP BY idmaterial ");
-                foreach ($data as $row) {
+                $data = mysqli_query($conn, "SELECT  barang.kodebarang, barang.name , material.last_stock FROM  barang, material where material.kodebarang =  barang.id ");
+                // foreach ($data as $row) {
+                  foreach($data as $row)
+                  {
                     ?>
                 <tr>
                     <td>
                         <?php echo $no++; ?>
                     </td>
                     <td>
-                        <?php echo $row['idmaterial']; ?>
-                    </td>
-                    <td>
                         <?php echo $row['kodebarang']; ?>
                     </td>
                     <td>
-                        <?php echo $row['jumlah']; ?>
+                        <?php echo $row['name']; ?>
+                    </td>
+                    <td>
+                        <?php echo $row['last_stock']; ?>
                     </td>
 
                     <td>
@@ -59,7 +61,9 @@
                             edit
                         </button>
                         &nbsp;
-                         <button class="btn btn-danger" onclick="location.href='delete.php?id=<?php echo  $row['id']; ?>';" value="Delete">Hapus</button>
+                        <button class="btn btn-danger"
+                            onclick="location.href='deletem.php?id=<?php echo  $row['id']; ?>';"
+                            value="Delete">Hapus</button>
                     </td>
                 </tr>
 
@@ -98,16 +102,16 @@
  
                         include "koneksi.php";
                         // mencari kode barang dengan nilai paling besar
-                        $query = "SELECT max(kodesupplier) as maxKode FROM supplier";
+                        $query = "SELECT max(idmaterial) as maxKode FROM material";
                         $hasil = mysqli_query($conn, $query);
                         $data = mysqli_fetch_array($hasil);
-                        $kodesupplier = $data['maxKode'];
+                        $idmaterial = $data['maxKode'];
                         
                         // mengambil angka atau bilangan dalam kode anggota terbesar,
                         // dengan cara mengambil substring mulai dari karakter ke-1 diambil 6 karakter
                         // misal 'BRG001', akan diambil '001'
                         // setelah substring bilangan diambil lantas dicasting menjadi integer
-                        $noUrut = (int) substr($kodesupplier, 3, 3);
+                        $noUrut = (int) substr($idmaterial, 3, 3);
                         
                         // bilangan yang diambil ini ditambah 1 untuk menentukan nomor urut berikutnya
                         $noUrut++;
@@ -116,37 +120,39 @@
                         // perintah sprintf("%03s", $noUrut); digunakan untuk memformat string sebanyak 3 karakter
                         // misal sprintf("%03s", 12); maka akan dihasilkan '012'
                         // atau misal sprintf("%03s", 1); maka akan dihasilkan string '001'
-                        $char = "S";
-                        $kodesupplier = $char . sprintf("%04s", $noUrut);
+                        $char = "M";
+                        $idmaterial = $char . sprintf("%04s", $noUrut);
 
                         ?>
                         
-        <form method="post" action="supplier/tambahproses.php">
+        <form method="post" action="materialtambah.php">
           <div class="d-block asd">
             <label>
-              <input type="text" id="kodesuppplier" name="kodesupplier" value="<?php echo $kodesupplier; ?>"  required />
+              <input type="text" id="idmaterial" name="idmaterial" value="<?php echo $idmaterial; ?>"  required />
               <div class="label-text">perusahaan</div>
             </label>
-            <br />
-            <label>
-              <input type="text" id="perusahaan" name="perusahaan"  required />
-              <div class="label-text">perusahaan</div>
-            </label>
-            <br />
-            <label>
-              <input type="text" id="alamat" name="alamat" required />
-              <div class="label-text">Alamat </div>
-            </label>
-            <br>
-            <label>
-              <input type="text" id="email" name="email" required />
-              <div class="label-text">Email</div>
-            </label>
-            <br>
-            <label>
-              <input type="text" id="nohp" name="nohp" required />
-              <div class="label-text">No. hp</div>
-            </label>
+            <? 
+                include 'koneksi.php';
+                $data1 = mysqli_query ($conn, "select * from barang"); ?>
+
+                        <div class="form-group">
+                            <label for="example">supplier</label>
+                            <select class="form-control" name="kodebarang" id="kodebarang"
+                                onchange="showDetail(this.value)" required>
+                                <option value="">Pilih Kode Order</option>
+                                <?php 
+                                    while ($hasil1 = mysqli_fetch_array ($data1))
+                                        {
+                                    ?>
+                                <option value="<?php echo $asd = $hasil1['id'] ?> ">
+                                    <?php echo $hasil1['name'] ?>
+                                </option>
+
+                                <? }
+                                    ?>
+
+                            </select>
+                        </div>
           </div>
           <div class="text-right mr-5">
             <button type="reset" value="reset" class="btn btn-secondary">Batal</button>
